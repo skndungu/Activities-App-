@@ -1,106 +1,55 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
-import NewEmployee from '@/components/NewEmployee'
-import ViewEmployee from '@/components/ViewEmployee'
-import EditEmployee from '@/components/EditEmployee'
-import Login from '@/components/Login'
-import Register  from '@/components/Register'
-import firebase from '@firebase/app'
+import Meetups from '@/components/Meetup/Meetups'
+import CreateMeetup from '@/components/Meetup/CreateMeetup' 
+import Profile from '@/components/User/Profile'
+import Signup from '@/components/User/Signup'
+import Signin from '@/components/User/Signin'
+import Meetup from '@/components/Meetup/Meetup'
+import AuthGuard from './auth-guard'
 
-Vue.use(Router);
+Vue.use(Router)
 
- let router = new Router({
+export default new Router({
   routes: [
     {
       path: '/',
       name: 'Home',
-      component: Home,
-      meta:{
-        requiresAuth: true
-      }
+      component: Home
     },
     {
-      path: '/login',
-      name: 'login',
-      component: Login,
-      meta:{
-        requiresGuest: true
-      }
+      path: '/meetups',
+      name: 'Meetups',
+      component: Meetups
     },
     {
-      path: '/register',
-      name: 'register',
-      component: Register,
-      meta:{
-        requiresGuest: true
-      }
+      path: '/meetup/new',
+      name: 'CreateMeetup',
+      component: CreateMeetup,
+      beforeEnter: AuthGuard
     },
     {
-      path: '/new',
-      name: 'new-employee',
-      component: NewEmployee,
-      meta:{
-        requiresAuth: true
-      }
+      path: '/meetups/:id',
+      name: 'Meetup',
+      props: true,
+      component: Meetup
     },
     {
-      path: '/edit/:employee_id',
-      name: 'edit-employee',
-      component: EditEmployee,
-      meta:{
-        requiresAuth: true
-      }
+      path: '/profile',
+      name: 'Profile',
+      component: Profile
     },
     {
-      path: '/:employee_id',
-      name: 'view-employee',
-      component: ViewEmployee,
-      meta:{
-        requiresAuth: true
-      }
+      path: '/signin',
+      name: 'Signin',
+      component: Signin
     },
-
-  ]
-});
-
-//nav guards 
-
-router.beforeEach((to, from, next) =>{
-  //check fro required guard
-  if(to.matched.some(record => record.meta.requiresAuth)){
-    //check if NOT logged in to firebase
-    if(!firebase.auth().currentUser){
-      // go to login 
-      next({
-        path: '/login',
-        query: {
-          redirect: to.fullPath
-        }
-      });
-    } else {
-      //proceed to the route
-      next();
+    {
+      path: '/signup',
+      name: 'Signup',
+      component: Signup
     }
-  }else if(to.matched.some(record => record.meta.requiresGuest)) {
-    //check if logged in to firebase
-    if(firebase.auth().currentUser){
-      // go to login 
-      next({
-        path: '/',
-        query: {
-          redirect: to.fullPath
-        }
-      });
-    } else {
-      //proceed to the route
-      next();
-    }
-  } else {
-     //proceed to the route
-      next();
-  }
-});
-
-export default router;
-
+  ],
+  mode : 'history'
+})

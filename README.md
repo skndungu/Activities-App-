@@ -1,6 +1,6 @@
-# managerapp
+# meetups
 
-> simple manager app 
+> A Vue.js project
 
 ## Build Setup
 
